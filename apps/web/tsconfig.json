@@ -1,15 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
-    "jsx":"react-jsx",
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "strictNullChecks": true,
-    "moduleResolution": "Bundler",
-    
+    "strictNullChecks": true
   },
   "include": [
     "**/*.ts",
