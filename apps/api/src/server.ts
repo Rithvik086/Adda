@@ -1,23 +1,22 @@
 import app from "./app.js";
 import http from "node:http";
-import {Server} from "socket.io";
-import { env } from "./utils/config.js";
+import { Server } from "socket.io";
+import { initializeSocket } from "./socket.js";
 
-const PORT = env.PORT || 3000;
-let isShuttingDown: boolean = false;
+const PORT = process.env.PORT || 3000;
+var isShuttingDown: boolean = false;
 
 const server: http.Server = app.listen(PORT, () => {
   console.log(`API server is running on http://localhost:${PORT}`);
 });
 
-
-const io = new  Server(server,{
-    cors:{
-        origin:"*",
-    }
+export const io = new Server(server, {
+  cors: {
+    origin: "*",
+  }
 });
 
-export {io};
+initializeSocket(io);
 
 setupGracefulShutdown(server);
 
