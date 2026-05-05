@@ -1,5 +1,6 @@
 import app from "./app.js";
 import http from "node:http";
+import {Server} from "socket.io";
 import { env } from "./utils/config.js";
 
 const PORT = env.PORT || 3000;
@@ -8,6 +9,15 @@ let isShuttingDown: boolean = false;
 const server: http.Server = app.listen(PORT, () => {
   console.log(`API server is running on http://localhost:${PORT}`);
 });
+
+
+const io = new  Server(server,{
+    cors:{
+        origin:"*",
+    }
+});
+
+export {io};
 
 setupGracefulShutdown(server);
 
