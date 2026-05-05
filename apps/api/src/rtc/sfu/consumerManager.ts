@@ -1,5 +1,5 @@
 import { Consumer, Transport, RtpCapabilities } from "@repo/types";
-import { getRouter } from "./RouterManager.js";
+import { getRouter } from "./routerManager.js";
 import { getProducerById } from "./producerManager.js";
 
 type ConsumerEntry = {

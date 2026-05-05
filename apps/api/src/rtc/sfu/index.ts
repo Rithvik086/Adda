@@ -1,3 +1,3 @@
-export { initWorker, getWorker } from "./WorkerManager.js";
-export { initRouter, getRouter } from "./RouterManager.js";
-export { connectTransport, createWebRtcTransport } from "./TransportManager.js";
+export { initWorker, getWorker } from "./workerManager.js";
+export { initRouterForRoom, getRouter } from "./routerManager.js";
+export { connectTransport, createWebRtcTransport } from "./transportManager.js";

@@ -1,10 +1,10 @@
-import { getRouter } from "./RouterManager.js";
+import { getRouter } from "./routerManager.js";
 import type { Transport, DtlsParameters } from "@repo/types";
 
-const transports = new Map<String, Transport>();
+const transports = new Map<string, Map<string, Transport>>();
 
-export const createWebRtcTransport = async (userId: String) => {
-  const router = getRouter();
+export const createWebRtcTransport = async (userId: string, roomId: string) => {
+  const router = getRouter(roomId);
   const transport = await router.createWebRtcTransport({
     listenIps: [
       {
@@ -19,7 +19,10 @@ export const createWebRtcTransport = async (userId: String) => {
     preferUdp: true,
   });
   // storing the transport in the map
-  transports.set(userId, transport);
+  if (!transports.has(roomId)) {
+    transports.set(roomId, new Map());
+  }
+  transports.get(roomId)!.set(userId, transport);
   return {
     id: transport.id,
     iceParameters: transport.iceParameters,
@@ -29,10 +32,18 @@ export const createWebRtcTransport = async (userId: String) => {
 };
 
 export const connectTransport = async (
-  userId: String,
+  userId: string,
+  roomId: string,
   dtlsParameters: DtlsParameters,
 ) => {
-  const transport = transports.get(userId);
+
+  const roomTranports = transports.get(roomId);
+  if (!roomTranports) {
+    throw new Error(`No transports found for room ${roomId}`);
+  }
+
+
+  const transport = roomTranports.get(userId);
   if (!transport) {
     throw new Error(`Transport not found for user ${userId}`);
   }
