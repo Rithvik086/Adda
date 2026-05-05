@@ -1,7 +1,7 @@
 import app from "./app.js";
 import http from "node:http";
 import { Server } from "socket.io";
-import { initializeSocket } from "./socket.js";
+import { initializeSocket } from "./socket/index.js";
 
 const PORT = process.env.PORT || 3000;
 var isShuttingDown: boolean = false;
