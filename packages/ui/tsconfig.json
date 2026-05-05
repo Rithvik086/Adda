@@ -1,9 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
-    "strictNullChecks": true,
-    "jsx":"react-jsx"
+    "outDir": "dist",
+    "strictNullChecks": true
   },
   "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,0 +1,71 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@repo/ui";
+import { AccessCodeInput } from "./AccessCodeInput";
+
+export const JoinSessionCard = () => {
+  const [accessCode, setAccessCode] = useState("");
+
+  const handleJoin = () => {
+    // Handle join logic
+    console.log("Joining with code:", accessCode);
+  };
+
+  const handleCreate = () => {
+    // Handle create logic
+    console.log("Creating room");
+  };
+
+  return (
+    <div className="w-full max-w-md flex flex-col items-center text-center">
+      {/* Atmospheric Branding Element */}
+      <div className="mb-12 relative">
+        <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150"></div>
+        <div className="relative w-16 h-16 rounded-full border border-outline-variant flex items-center justify-center bg-surface-container">
+          <span
+            className="material-symbols-outlined text-primary text-3xl"
+            data-icon="graphic_eq"
+          >
+            graphic_eq
+          </span>
+        </div>
+      </div>
+      {/* Join Form Section */}
+      <header className="mb-10">
+        <h1 className="text-3xl font-extrabold tracking-tight text-on-surface mb-3">
+          Join a Session
+        </h1>
+        <p className="text-on-surface-variant text-sm font-medium">
+          Enter the 6-digit access code to enter the void.
+        </p>
+      </header>
+      <div className="w-full space-y-8">
+        {/* Room Code Input */}
+        <AccessCodeInput value={accessCode} onChange={setAccessCode} />
+        {/* Primary Action */}
+        <div className="flex flex-col gap-4">
+          <Button variant="gradient" className="w-full" onClick={handleJoin}>
+            Join Room
+            <span
+              className="material-symbols-outlined text-lg"
+              data-icon="arrow_forward"
+            >
+              arrow_forward
+            </span>
+          </Button>
+          <div className="flex items-center gap-4 py-2">
+            <div className="h-px grow bg-outline-variant/30"></div>
+            <span className="text-[10px] uppercase tracking-tighter text-zinc-600 font-bold">
+              Or
+            </span>
+            <div className="h-px grow bg-outline-variant/30"></div>
+          </div>
+          <Button variant="secondary" className="w-full" onClick={handleCreate}>
+            Create Room
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
