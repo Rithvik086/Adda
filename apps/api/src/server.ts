@@ -1,10 +1,9 @@
-import dotenv from "dotenv";
 import app from "./app.js";
 import http from "node:http";
-dotenv.config();
+import { env } from "./utils/config.js";
 
-const PORT = process.env.PORT || 3000;
-var isShuttingDown: boolean = false;
+const PORT = env.PORT || 3000;
+let isShuttingDown: boolean = false;
 
 const server: http.Server = app.listen(PORT, () => {
   console.log(`API server is running on http://localhost:${PORT}`);
