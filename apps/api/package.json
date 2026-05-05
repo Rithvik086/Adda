@@ -15,7 +15,8 @@
     "express": "^5.2.1",
     "pino": "^10.3.1",
     "tsx": "^4.21.0",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "mediasoup": "3"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
