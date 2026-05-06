@@ -1,6 +1,6 @@
-import { workerType } from "@repo/types";
+import { WorkerType } from "@repo/types";
 import mediasoup from "mediasoup";
-let worker: workerType;
+let worker: WorkerType;
 
 export const initWorker = async () => {
   // for ensuring sigleton init
