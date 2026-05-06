@@ -7,6 +7,7 @@ import {
   getPeer,
 } from "../../services/redis.js";
 import { logger } from "../../utils/logger.js";
+import { initRouterForRoom } from "../../rtc/sfu/routerManager.js";
 
 export const handleRoomEvents = (io: Server, socket: Socket) => {
   // Event 2.1: Client sends { roomId, name }
@@ -23,6 +24,9 @@ export const handleRoomEvents = (io: Server, socket: Socket) => {
 
         // 3. Join the actual Socket.IO room for broadcasting
         socket.join(roomId);
+
+        // Create router for the same room
+        await initRouterForRoom(roomId);
 
         // 4. Fetch existing peers in the room
         const peerIds = await getPeersInRoom(roomId);
