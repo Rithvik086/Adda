@@ -3,6 +3,20 @@ import type { Transport, DtlsParameters } from "@repo/types";
 
 const transports = new Map<string, Map<string, Transport>>();
 
+export const getTransport = (userId: string, roomId: string) => {
+  const roomTransports = transports.get(roomId);
+  if (!roomTransports) {
+    throw new Error(`No transports found for room ${roomId}`);
+  }
+
+  const transport = roomTransports.get(userId);
+  if (!transport) {
+    throw new Error(`Transport not found for user ${userId} in room ${roomId}`);
+  }
+
+  return transport;
+};
+
 export const createWebRtcTransport = async (userId: string, roomId: string) => {
   const router = getRouter(roomId);
   const transport = await router.createWebRtcTransport({
@@ -36,16 +50,6 @@ export const connectTransport = async (
   roomId: string,
   dtlsParameters: DtlsParameters,
 ) => {
-
-  const roomTranports = transports.get(roomId);
-  if (!roomTranports) {
-    throw new Error(`No transports found for room ${roomId}`);
-  }
-
-
-  const transport = roomTranports.get(userId);
-  if (!transport) {
-    throw new Error(`Transport not found for user ${userId}`);
-  }
+  const transport = getTransport(userId, roomId);
   await transport.connect({ dtlsParameters });
 };

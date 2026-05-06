@@ -26,7 +26,7 @@ export const consume = async (
   producerId: string,
   rtpCapabilities: RtpCapabilities,
 ) => {
-  const router = getRouter();
+  const router = getRouter(roomId);
   const producerEntry = getProducerById(producerId);
 
   if (!producerEntry) {
