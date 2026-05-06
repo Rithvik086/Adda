@@ -1,6 +1,7 @@
-import { workerType } from "@repo/types";
+import { WorkerType } from "@repo/types";
 import mediasoup from "mediasoup";
-let worker: workerType;
+import { logger } from "../../utils/logger.js";
+let worker: WorkerType;
 
 export const initWorker = async () => {
   // for ensuring sigleton init
@@ -17,7 +18,7 @@ export const initWorker = async () => {
 
   //  worker crash
   worker.on("died", () => {
-    console.error("Worker died");
+    logger.error("Worker died");
 
     setTimeout(() => {
       process.exit(1);
