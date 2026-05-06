@@ -1,19 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@repo/ui";
 import { AccessCodeInput } from "./AccessCodeInput";
 
 export const JoinSessionCard = () => {
   const [accessCode, setAccessCode] = useState("");
+  const router = useRouter();
 
   const handleJoin = () => {
-    // Handle join logic
-    console.log("Joining with code:", accessCode);
+    const trimmed = accessCode.trim();
+    if (trimmed.length < 4) return;
+    router.push(`/room/${encodeURIComponent(trimmed)}`);
   };
 
   const handleCreate = () => {
-    // Handle create logic
+    // Handle create logic — future: call POST /api/rooms
     console.log("Creating room");
   };
 
