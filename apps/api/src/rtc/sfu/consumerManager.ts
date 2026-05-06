@@ -19,7 +19,7 @@ const userConsumers = new Map<string, Set<string>>();
 const producerConsumers = new Map<string, Set<string>>();
 // producerId -> [consumerIds]
 
-export const createConsumer = async (
+export const consume = async (
   userId: string,
   roomId: string,
   transport: Transport,
@@ -54,13 +54,35 @@ export const createConsumer = async (
     paused: true, //always start paused
   });
 
-  // Store
-  consumers.set(consumer.id, {
+  addConsumer({
     consumer,
     userId,
     producerId,
     roomId,
-    routerId: producerEntry.routerId,
+    routerId: router.id,
+  });
+
+  return {
+    consumerId: consumer.id,
+  };
+};
+
+export const addConsumer = ({
+  consumer,
+  userId,
+  producerId,
+  roomId,
+  routerId,
+}: ConsumerEntry) => {
+  const consumerId = consumer.id;
+  //
+  // Global map
+  consumers.set(consumerId, {
+    consumer,
+    userId,
+    producerId,
+    roomId,
+    routerId,
   });
 
   if (!userConsumers.has(userId)) {
