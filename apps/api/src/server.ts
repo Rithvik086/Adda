@@ -2,18 +2,20 @@ import app from "./app.js";
 import http from "node:http";
 import { Server } from "socket.io";
 import { initializeSocket } from "./socket/index.js";
+import { env } from "./utils/config.js";
+import { logger } from "./utils/logger.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = env.PORT || 3000;
 var isShuttingDown: boolean = false;
 
 const server: http.Server = app.listen(PORT, () => {
-  console.log(`API server is running on http://localhost:${PORT}`);
+  logger.info(`API server is running on http://localhost:${PORT}`);
 });
 
 export const io = new Server(server, {
   cors: {
     origin: "*",
-  }
+  },
 });
 
 initializeSocket(io);
@@ -25,48 +27,48 @@ function setupGracefulShutdown(server: http.Server) {
   process.on("SIGINT", () => gracefulShutdown("SIGINT", server));
 
   process.on("uncaughtException", (err) => {
-    console.error("Uncaught Exception: ", err);
+    logger.error("Uncaught Exception: %s", err);
     forceShutdown(1);
   });
 
   process.on("unhandledRejection", (reason, promise) => {
-    console.error("Unhandled Rejection", { promise, reason });
+    logger.error({ promise, reason }, "Unhandled Rejection");
     forceShutdown(1);
   });
 }
 
 function gracefulShutdown(signal: string, server: http.Server) {
   if (isShuttingDown) {
-    console.log(`Shutdown already in progress, ignoring ${signal}`);
+    logger.info(`Shutdown already in progress, ignoring ${signal}`);
     return;
   }
 
   isShuttingDown = true;
-  console.log(`Recived ${signal}. Starting graceful shutdown...`);
+  logger.info(`Recived ${signal}. Starting graceful shutdown...`);
 
   if (!server) {
-    console.warn("Server not initialized, exiting immidiately");
+    logger.warn("Server not initialized, exiting immidiately");
     process.exit(0);
   }
 
   server.close((err?: Error) => {
     if (err) {
-      console.error("Error during server close: ", err);
+      logger.error("Error during server close: %s", err);
       forceShutdown(1);
       return;
     }
 
-    console.log("HTTP server closed successfully!");
+    logger.info("HTTP server closed successfully!");
     process.exit(0);
   });
 
   setTimeout(() => {
-    console.error("Forced shutdown after 30 second timeout");
+    logger.error("Forced shutdown after 30 second timeout");
     forceShutdown(1);
   }, 30000);
 }
 
 function forceShutdown(code: number): void {
-  console.log(`Force shutdown with exit code: ${code}`);
+  logger.info(`Force shutdown with exit code: ${code}`);
   process.exit(code);
 }

@@ -1,5 +1,6 @@
 import { WorkerType } from "@repo/types";
 import mediasoup from "mediasoup";
+import { logger } from "../../utils/logger.js";
 let worker: WorkerType;
 
 export const initWorker = async () => {
@@ -17,7 +18,7 @@ export const initWorker = async () => {
 
   //  worker crash
   worker.on("died", () => {
-    console.error("Worker died");
+    logger.error("Worker died");
 
     setTimeout(() => {
       process.exit(1);
