@@ -60,9 +60,7 @@ export const RoomControls = ({
           onClick={handleLeave}
           title="Leave room"
         >
-          <span className="material-symbols-outlined text-lg">
-            logout
-          </span>
+          <span className="material-symbols-outlined text-lg">logout</span>
           Leave
         </button>
       </div>

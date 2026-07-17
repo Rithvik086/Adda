@@ -33,7 +33,7 @@ const keys = {
 //peerId => {roomId,socketId,name}
 //socketId => {peerId}
 
-interface peerType {
+export interface PeerData {
   socketId: string;
   roomId: string;
   name: string;
@@ -41,7 +41,7 @@ interface peerType {
 
 const createPeer = async (
   peerId: string,
-  { socketId, roomId, name }: peerType,
+  { socketId, roomId, name }: PeerData,
 ) => {
   const multi = redis.multi();
 
@@ -59,8 +59,23 @@ const getPeersInRoom = async (roomId: string) => {
   return await redis.smembers(keys.room(roomId));
 };
 
-const getPeer = async (peerId: string) => {
-  return await redis.hgetall(keys.peer(peerId));
+const getPeer = async (peerId: string): Promise<PeerData | null> => {
+  const data = await redis.hgetall(keys.peer(peerId));
+  if (!data || Object.keys(data).length === 0) return null;
+
+  if (
+    typeof data.socketId !== "string" ||
+    typeof data.roomId !== "string" ||
+    typeof data.name !== "string"
+  ) {
+    return null;
+  }
+
+  return {
+    socketId: data.socketId,
+    roomId: data.roomId,
+    name: data.name,
+  };
 };
 
 const getPeerBySocket = async (socketId: string) => {

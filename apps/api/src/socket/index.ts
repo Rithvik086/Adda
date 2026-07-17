@@ -49,7 +49,7 @@ export const initializeSocket = (io: Server) => {
             await removePeer(peerId);
 
             // 5. Notify everyone else in the room
-            io.to(roomId).emit("user-left", { peerId });
+            io.to(roomId).emit("userLeft", { peerId });
 
             logger.info(`🧹 Cleaned up peer [${peerId}] from room [${roomId}]`);
           }

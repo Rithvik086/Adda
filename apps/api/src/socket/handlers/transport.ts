@@ -5,22 +5,48 @@ import {
 } from "../../rtc/sfu/index.js";
 import { getPeerBySocket } from "../../services/redis.js";
 import { logger } from "../../utils/logger.js";
-// let dltsParams;
+import { getRouterCapabilities } from "../../rtc/sfu/routerManager.js";
+import { DtlsParameters } from "@repo/types";
 
 export const handleTransportevents = (io: Server, socket: Socket) => {
   socket.on(
-    "create-transport",
-    async ({ roomId, direction }: { roomId: string; direction: string }) => {
+    "getRouterRtpCapabilities",
+    ({ roomId }: { roomId: string }, callback) => {
+      if (!roomId) {
+        return callback({
+          error: "room id is not provided",
+        });
+      }
+
+      try {
+        const rtpCapabilities = getRouterCapabilities(roomId);
+
+        callback({
+          data: rtpCapabilities,
+        });
+      } catch (error) {
+        callback({
+          error: error instanceof Error ? error.message : "unknown error",
+        });
+      }
+    },
+  );
+
+  socket.on(
+    "createTransport",
+    async (
+      { roomId, direction }: { roomId: string; direction: "c2s" | "s2c" },
+      callback,
+    ) => {
       try {
         const userId = await getPeerBySocket(socket.id);
         if (!userId) {
           throw new Error("No peerId associated with socket id");
         }
 
-        const transportInfo = await createWebRtcTransport(userId, roomId);
-        // return ice candidated and other info
-        // dltsParams = transportInfo.dtlsParameters
-        socket.emit("transport-created", {
+        const transportInfo = await createWebRtcTransport(userId, roomId, direction);
+
+        callback({
           ...transportInfo,
           direction,
         });
@@ -33,20 +59,36 @@ export const handleTransportevents = (io: Server, socket: Socket) => {
     },
   );
 
-  socket.on("connect-transport", async ({ roomId, dltsParametrs }) => {
-    try {
-      const userId = await getPeerBySocket(socket.id);
-      if (!userId) {
-        throw new Error("No peerId associated with socket id");
+  socket.on(
+    "connectTransport",
+    async (
+      {
+        roomId,
+        direction,
+        dtlsParameters,
+      }: {
+        roomId: string;
+        direction: "c2s" | "s2c";
+        dtlsParameters: DtlsParameters;
+      },
+      callback,
+    ) => {
+      try {
+        const userId = await getPeerBySocket(socket.id);
+        if (!userId) {
+          throw new Error("No peerId associated with socket id");
+        }
+        await connectTransport(userId, roomId, direction, dtlsParameters);
+        if (typeof callback === "function") {
+          callback({ success: true });
+        }
+      } catch (err) {
+        if (typeof callback === "function") {
+          callback({ error: err instanceof Error ? err.message : "Failed to connect to transport" });
+        }
       }
-      await connectTransport(userId, roomId, dltsParametrs);
-      socket.emit("treansport-connected");
-    } catch (err) {
-      socket.emit("error", {
-        message: "Failed ot connect to transport",
-      });
-    }
-  });
+    },
+  );
 };
 
 // TODO: Need to create a handleTransportDisconnect

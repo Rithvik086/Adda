@@ -4,13 +4,13 @@ import { getRouter, getTransport, produce } from "../../rtc/sfu/index.js";
 import { getPeerBySocket } from "../../services/redis.js";
 
 export const handleProduce = (io: Server, socket: Socket) => {
-  socket.on("produce", async ({ roomId, kind, rtpParameters }) => {
+  socket.on("produce", async ({ roomId, kind, rtpParameters }, cb) => {
     try {
       const userId = await getPeerBySocket(socket.id);
       if (!userId) {
         throw new Error("No peerId associated with socket id");
       }
-      const transport = getTransport(userId, roomId);
+      const transport = getTransport(userId, roomId, "c2s");
       const router = getRouter(roomId);
       // TODO: check if a user himself exist in the room
 
@@ -23,11 +23,16 @@ export const handleProduce = (io: Server, socket: Socket) => {
         router.id,
       );
 
-      socket.emit("produced", { producerId });
-    } catch (err) {
-      socket.emit("error", {
-        message: "Failed to make a producer",
+      // Notify other clients in the room about the new producer
+      socket.to(roomId).emit("newProducer", {
+        producerId,
+        producerUserId: userId,
+        kind,
       });
+
+      cb({ id: producerId });
+    } catch (err) {
+      cb({ error: err instanceof Error ? err.message : "Failed to make a producer" });
     }
   });
 };
