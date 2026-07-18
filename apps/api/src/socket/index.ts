@@ -7,6 +7,9 @@ import {
   removePeer,
 } from "../services/redis.js";
 import { logger } from "../utils/logger.js";
+import { handleTransportevents } from "./handlers/transport.js";
+import { handleConsume } from "./handlers/consume.js";
+import { handleProduce } from "./handlers/produce.js";
 
 export const initializeSocket = (io: Server) => {
   io.on("connection", (socket) => {
@@ -15,10 +18,19 @@ export const initializeSocket = (io: Server) => {
     // Attach the room handlers (joinRoom)
     handleRoomEvents(io, socket);
 
+    // Handle the transport creation
+    handleTransportevents(io, socket);
+
+    // Handle the consume requests
+    handleConsume(io, socket);
+
+    // Handle the produce requests
+    handleProduce(io, socket);
+
     //  3: Disconnect Cleanup
     socket.on("disconnect", async () => {
       logger.info(`🔌 Socket disconnected: ${socket.id}`);
-
+      // TODO: Need to remove the trasnport, consumer, producer for the respecive user
       try {
         // 1. Get peerId using the socket lookup key
         const peerId = await getPeerBySocket(socket.id);
@@ -37,7 +49,7 @@ export const initializeSocket = (io: Server) => {
             await removePeer(peerId);
 
             // 5. Notify everyone else in the room
-            io.to(roomId).emit("user-left", { peerId });
+            io.to(roomId).emit("userLeft", { peerId });
 
             logger.info(`🧹 Cleaned up peer [${peerId}] from room [${roomId}]`);
           }

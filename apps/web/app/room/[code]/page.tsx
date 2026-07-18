@@ -28,10 +28,10 @@ export default async function RoomPage({ params }: RoomPageProps) {
   }
 
   return (
-    <>
+    <div>
       <RoomTopNav sessionCode={room.sessionCode} />
       <ActiveRoomView room={room} />
       <Background />
-    </>
+    </div>
   );
 }

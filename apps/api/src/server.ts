@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import { initializeSocket } from "./socket/index.js";
 import { env } from "./utils/config.js";
 import { logger } from "./utils/logger.js";
+import { initWorker } from "./rtc/sfu/workerManager.js";
 
 const PORT = env.PORT || 3000;
 var isShuttingDown: boolean = false;
@@ -11,6 +12,8 @@ var isShuttingDown: boolean = false;
 const server: http.Server = app.listen(PORT, () => {
   logger.info(`API server is running on http://localhost:${PORT}`);
 });
+
+await initWorker();
 
 export const io = new Server(server, {
   cors: {

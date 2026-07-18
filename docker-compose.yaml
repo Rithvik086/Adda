@@ -1,0 +1,54 @@
+services:
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - adda
+
+  redis_insight:
+    image: redis/redisinsight:latest
+    restart: unless-stopped
+    depends_on:
+      - redis
+    ports:
+      - "5540:5540"
+    networks:
+      - adda
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    networks:
+      - adda
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks:
+      - adda
+
+volumes:
+  redis_data:
+
+networks:
+  adda:

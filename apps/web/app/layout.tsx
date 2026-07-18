@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SocketProvider } from "../lib/socket";
 
 export const metadata: Metadata = {
   title: "Adda | Join",
@@ -24,7 +25,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-background text-on-surface flex flex-col min-h-screen selection:bg-primary/30">
-        {children}
+        <SocketProvider>{children}</SocketProvider>
       </body>
     </html>
   );

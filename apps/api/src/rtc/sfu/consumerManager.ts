@@ -1,5 +1,5 @@
 import { Consumer, Transport, RtpCapabilities } from "@repo/types";
-import { getRouter } from "./RouterManager.js";
+import { getRouter } from "./routerManager.js";
 import { getProducerById } from "./producerManager.js";
 
 type ConsumerEntry = {
@@ -26,7 +26,7 @@ export const consume = async (
   producerId: string,
   rtpCapabilities: RtpCapabilities,
 ) => {
-  const router = getRouter();
+  const router = getRouter(roomId);
   const producerEntry = getProducerById(producerId);
 
   if (!producerEntry) {
@@ -54,17 +54,13 @@ export const consume = async (
     paused: true, //always start paused
   });
 
-  addConsumer({
+  return addConsumer({
     consumer,
     userId,
     producerId,
     roomId,
     routerId: router.id,
   });
-
-  return {
-    consumerId: consumer.id,
-  };
 };
 
 export const addConsumer = ({

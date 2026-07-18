@@ -15,13 +15,13 @@ export async function fetchRoomByCode(code: string): Promise<Room | null> {
   // Simulate a small network delay
   await new Promise((r) => setTimeout(r, 100));
 
-  // Accept any 4+ character code for now
-  if (!code || code.length < 4) return null;
+  // Accept any 6+ character code for now
+  if (!code || code.length < 6) return null;
 
   return {
-    id: "room-001",
+    id: code,
     name: "Midnight Echo",
-    sessionCode: "XV7-991",
+    sessionCode: code.toUpperCase(),
     closesInMinutes: 42,
     createdAt: new Date().toISOString(),
     participants: [

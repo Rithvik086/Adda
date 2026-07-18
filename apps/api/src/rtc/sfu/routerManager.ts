@@ -1,9 +1,14 @@
-import { getWorker } from "./WorkerManager.js";
+import { getWorker } from "./workerManager.js";
 import type { Router, MediaCodec } from "@repo/types";
 
 let router: Router | undefined;
-export async function initRouter(): Promise<Router> {
-  if (router) return router;
+
+const routers = new Map<string, Router>();
+
+export async function initRouterForRoom(roomId: string): Promise<Router> {
+  if (routers.has(roomId)) {
+    return routers.get(roomId)!;
+  }
 
   const worker = getWorker();
 
@@ -28,12 +33,24 @@ export async function initRouter(): Promise<Router> {
 
   router = await worker.createRouter({ mediaCodecs });
 
+  routers.set(roomId, router);
+
   return router;
 }
 
-export const getRouter = (): Router => {
+export const getRouter = (roomId: string): Router => {
+  const router = routers.get(roomId);
   if (!router) {
     throw new Error("Router isnt initialised");
   }
   return router;
+};
+
+export const getRouterCapabilities = (roomId: string) => {
+  const router = getRouter(roomId);
+  if (!router) {
+    throw new Error("Router isnt initialised");
+  }
+
+  return router.rtpCapabilities;
 };
