@@ -45,3 +45,12 @@ export const getRouter = (roomId: string): Router => {
   }
   return router;
 };
+
+export const getRouterCapabilities = (roomId: string) => {
+  const router = getRouter(roomId);
+  if (!router) {
+    throw new Error("Router isnt initialised");
+  }
+
+  return router.rtpCapabilities;
+};

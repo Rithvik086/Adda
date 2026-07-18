@@ -69,7 +69,7 @@ export const addProducer = ({
 
   // user index
   if (!userProducers.has(userId)) {
-    userProducers.set(roomId, new Set());
+    userProducers.set(userId, new Set());
   }
   userProducers.get(userId)!.add(producerId);
 
@@ -114,6 +114,6 @@ export const getUserProducers = (userId: string) => {
 
 export const getConsumableProducers = (roomId: string, userId: string) => {
   return getRoomProducers(roomId).filter((entry) => {
-    entry && entry.userId !== userId;
+    return entry && entry.userId !== userId;
   });
 };

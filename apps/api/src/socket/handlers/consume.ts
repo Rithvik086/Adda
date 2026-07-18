@@ -3,40 +3,48 @@ import {
   consume,
   getTransport,
   getConsumableProducers,
+  resumeConsumer,
 } from "../../rtc/sfu/index.js";
 import { getPeerBySocket } from "../../services/redis.js";
 
 export const handleConsume = (io: Server, socket: Socket) => {
-  socket.on("consume", async ({ roomId, rtpCapabilities, producerId }) => {
+  socket.on("consume", async ({ roomId, rtpCapabilities, producerId }, cb) => {
     try {
       const userId = await getPeerBySocket(socket.id);
       if (!userId) {
-        socket.emit("error", {
-          message: "No userId associated with socket id",
-        });
-        return;
+        throw new Error("No userId associated with socket id");
       }
-      const transport = getTransport(userId, roomId);
+      const transport = getTransport(userId, roomId, "s2c");
       const producers = getConsumableProducers(roomId, userId);
       const targetProducer = producers.find(
         (p) => p && p.producer.id === producerId,
       );
       if (!targetProducer) {
-        socket.emit("error", { message: "Producer not found or not allowed" });
-        return;
+        throw new Error("Producer not found or not allowed");
       }
-      const { consumerId } = await consume(
+      const consumerParams = await consume(
         userId,
         roomId,
         transport,
         producerId,
         rtpCapabilities,
       );
-      socket.emit("consumed", { consumerId });
+      cb({ data: consumerParams });
     } catch (err) {
-      socket.emit("error", {
-        message: "error consuming",
-      });
+      cb({ error: err instanceof Error ? err.message : "error consuming" });
+    }
+  });
+
+  socket.on("resumeConsumer", async ({ consumerId }, cb) => {
+    try {
+      await resumeConsumer(consumerId);
+      if (typeof cb === "function") {
+        cb({ success: true });
+      }
+    } catch (err) {
+      if (typeof cb === "function") {
+        cb({ error: err instanceof Error ? err.message : "Failed to resume consumer" });
+      }
     }
   });
 };

@@ -7,12 +7,17 @@ import { AccessCodeInput } from "./AccessCodeInput";
 
 export const JoinSessionCard = () => {
   const [accessCode, setAccessCode] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const router = useRouter();
 
   const handleJoin = () => {
-    const trimmed = accessCode.trim();
-    if (trimmed.length < 4) return;
-    router.push(`/room/${encodeURIComponent(trimmed)}`);
+    const trimmedCode = accessCode.trim();
+    const trimmedName = displayName.trim();
+    if (trimmedCode.length < 6 || trimmedName.length < 3) return;
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem("adda.displayName", trimmedName);
+    }
+    router.push(`/room/${encodeURIComponent(trimmedCode)}`);
   };
 
   const handleCreate = () => {
@@ -44,6 +49,24 @@ export const JoinSessionCard = () => {
         </p>
       </header>
       <div className="w-full space-y-8">
+        {/* Display Name Input */}
+        <div className="flex flex-col gap-2 group text-left">
+          <div className="flex justify-between items-center px-1">
+            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">
+              Display Name
+            </label>
+          </div>
+          <input
+            autoComplete="name"
+            className="w-full bg-surface-container-lowest border-none text-sm tracking-wide font-medium py-3 px-4 rounded-xl text-on-surface transition-all placeholder:text-zinc-600"
+            maxLength={32}
+            placeholder="Your name"
+            spellCheck={false}
+            type="text"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+          />
+        </div>
         {/* Room Code Input */}
         <AccessCodeInput value={accessCode} onChange={setAccessCode} />
         {/* Primary Action */}

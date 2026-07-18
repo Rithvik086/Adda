@@ -54,17 +54,13 @@ export const consume = async (
     paused: true, //always start paused
   });
 
-  addConsumer({
+  return addConsumer({
     consumer,
     userId,
     producerId,
     roomId,
     routerId: router.id,
   });
-
-  return {
-    consumerId: consumer.id,
-  };
 };
 
 export const addConsumer = ({
