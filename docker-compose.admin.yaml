@@ -11,4 +11,4 @@ services:
 
 networks:
   adda_network:
-    external: true
+    driver: bridge
