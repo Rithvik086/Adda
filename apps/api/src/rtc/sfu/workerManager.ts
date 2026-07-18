@@ -13,7 +13,7 @@ export const initWorker = async () => {
     logLevel: "warn",
 
     // for development purpose only
-    rtcMaxPort: 49999,
+    rtcMaxPort: 40100,
     rtcMinPort: 40000,
   });
 
