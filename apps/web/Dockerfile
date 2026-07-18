@@ -29,6 +29,10 @@ RUN pnpm install --frozen-lockfile
 
 FROM deps AS builder
 
+ARG NEXT_PUBLIC_SOCKET_URL
+
+ENV NEXT_PUBLIC_SOCKET_URL=$NEXT_PUBLIC_SOCKET_URL
+
 COPY . .
 
 RUN pnpm --filter web build

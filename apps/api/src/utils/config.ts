@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]).default("development"),
-  PORT: z.coerce.number().default(3000),
+  API_PORT: z.coerce.number().default(8080),
   REDIS_URL: z.string().default("redis://localhost:6379"),
   ANNOUNCED_IP: z.string(),
 });

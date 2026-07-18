@@ -61,10 +61,10 @@ export const initSendTransport = async (
   },
 ): Promise<Transport<AppData> | undefined> => {
   try {
-    const sendTransport = device.createSendTransport({
-      ...transportInfo,
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-    });
+    console.log("Transport from server:", transportInfo);
+    const sendTransport = device.createSendTransport(transportInfo);
+    console.log("ICE params:", transportInfo.iceParameters);
+    console.log("ICE candidates:", transportInfo.iceCandidates);
     return sendTransport;
   } catch (error: any) {
     if (error.name === "InvalidStateError") {
@@ -85,10 +85,7 @@ export const initRecvTransport = async (
   },
 ) => {
   try {
-    const recvTransport = device.createRecvTransport({
-      ...transportInfo,
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-    });
+    const recvTransport = device.createRecvTransport(transportInfo);
     return recvTransport;
   } catch (error: any) {
     if (error.name === "InvalidStateError") {
@@ -115,6 +112,7 @@ export const produceAudio = async (sendTransport: Transport<AppData>) => {
       currentDevice.canProduce("audio"),
     );
 
+    console.log("Received produce request");
     const producer = await sendTransport.produce({ track: audioTrack });
     return producer;
   } catch (error) {
