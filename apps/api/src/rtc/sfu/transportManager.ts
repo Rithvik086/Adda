@@ -1,3 +1,4 @@
+import { env } from "../../utils/config.js";
 import { getRouter } from "./routerManager.js";
 import type { Transport, DtlsParameters } from "@repo/types";
 
@@ -35,11 +36,11 @@ export const createWebRtcTransport = async (
         // listen to all extrenally
         ip: "0.0.0.0",
         // set up t he servers ip address
-        announcedIp: "192.168.1.7",
+        announcedIp: env.ANNOUNCED_IP,
       },
     ],
     enableUdp: true,
-    enableTcp: true,
+    enableTcp: false,
     preferUdp: true,
   });
   // storing the transport in the map
