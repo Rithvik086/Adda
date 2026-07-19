@@ -10,10 +10,10 @@ export const initWorker = async () => {
     return worker;
   }
   worker = await mediasoup.createWorker({
-    logLevel: "warn",
+    logLevel: "debug",
 
     // for development purpose only
-    rtcMaxPort: 49999,
+    rtcMaxPort: 40100,
     rtcMinPort: 40000,
   });
 

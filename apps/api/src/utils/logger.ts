@@ -6,6 +6,7 @@ const logger = pino(
   isProduction
     ? {}
     : {
+        level: "trace",
         transport: {
           target: "pino-pretty",
           options: {

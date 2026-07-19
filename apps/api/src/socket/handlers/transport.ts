@@ -44,7 +44,14 @@ export const handleTransportevents = (io: Server, socket: Socket) => {
           throw new Error("No peerId associated with socket id");
         }
 
-        const transportInfo = await createWebRtcTransport(userId, roomId, direction);
+        const transportInfo = await createWebRtcTransport(
+          userId,
+          roomId,
+          direction,
+        );
+
+        logger.debug(transportInfo.iceCandidates, "ICE Candidates");
+        logger.debug(transportInfo.iceParameters, "ICE Parameters");
 
         callback({
           ...transportInfo,
@@ -84,7 +91,12 @@ export const handleTransportevents = (io: Server, socket: Socket) => {
         }
       } catch (err) {
         if (typeof callback === "function") {
-          callback({ error: err instanceof Error ? err.message : "Failed to connect to transport" });
+          callback({
+            error:
+              err instanceof Error
+                ? err.message
+                : "Failed to connect to transport",
+          });
         }
       }
     },

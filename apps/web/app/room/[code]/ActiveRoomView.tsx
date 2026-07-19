@@ -195,32 +195,45 @@ export const ActiveRoomView = ({ room }: ActiveRoomViewProps) => {
           console.log(`📡 Producer Transport State: ${state}`);
         });
 
-        producerTransport.on("connect", async ({ dtlsParameters }, cb) => {
-          const res = await socket.emitWithAck("connectTransport", {
-            roomId: room.id,
-            direction: "c2s",
-            dtlsParameters,
-          });
-          if (res.error) {
-            console.error(
-              "connectTransport failed for producer transport:",
-              res.error,
-            );
-            return;
-          }
-          cb();
-        });
+        producerTransport.on(
+          "connect",
+          async ({ dtlsParameters }, cb, errback) => {
+            try {
+              const res = await socket.emitWithAck("connectTransport", {
+                roomId: room.id,
+                direction: "c2s",
+                dtlsParameters,
+              });
+              if (res.error) {
+                console.error(
+                  "connectTransport failed for producer transport:",
+                  res.error,
+                );
+                return;
+              }
+              cb();
+            } catch (err) {
+              console.error("connectTransport failed", err);
+              errback(err as Error);
+            }
+          },
+        );
 
-        producerTransport.on("produce", async (parameters, cb) => {
-          const res = await socket.emitWithAck("produce", {
-            ...parameters,
-            roomId: room.id,
-          });
-          if (res.error) {
-            console.error("produce failed:", res.error);
-            return;
+        producerTransport.on("produce", async (parameters, cb, errback) => {
+          try {
+            const res = await socket.emitWithAck("produce", {
+              ...parameters,
+              roomId: room.id,
+            });
+            if (res.error) {
+              console.error("produce failed:", res.error);
+              return;
+            }
+            cb({ id: res.id });
+          } catch (err) {
+            console.log("produce in connectTransport failed", err);
+            errback(err as Error);
           }
-          cb({ id: res.id });
         });
 
         const producer = await produceAudio(producerTransport);

@@ -6,7 +6,7 @@ import { env } from "./utils/config.js";
 import { logger } from "./utils/logger.js";
 import { initWorker } from "./rtc/sfu/workerManager.js";
 
-const PORT = env.PORT || 3000;
+const PORT = env.API_PORT || 3000;
 var isShuttingDown: boolean = false;
 
 const server: http.Server = app.listen(PORT, () => {
