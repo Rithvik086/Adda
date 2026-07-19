@@ -1,8 +1,8 @@
 docker-up-admin:
-	docker compose -f docker-compose.yaml -f docker-compose.admin.yaml up --build -d
+	docker compose -f docker-compose.admin.yaml up --build -d
 
 docker-down-admin:
-	docker compose -f docker-compose.yaml -f docker-compose.admin.yaml down
+	docker compose -f docker-compose.admin.yaml down
 
 docker-up-dev:
 	docker compose -f docker-compose.dev.yml up
