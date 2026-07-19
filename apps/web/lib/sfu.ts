@@ -38,8 +38,6 @@ export const loadRtpCapabilities = async (
   try {
     const device = await getDevice();
 
-    console.log("Loading Router RTP Capabilities:", routerRtpCapabilities);
-
     await device.load({ routerRtpCapabilities });
     console.log("Device successfully loaded capabilities!");
   } catch (error: any) {
@@ -61,10 +59,7 @@ export const initSendTransport = async (
   },
 ): Promise<Transport<AppData> | undefined> => {
   try {
-    console.log("Transport from server:", transportInfo);
     const sendTransport = device.createSendTransport(transportInfo);
-    console.log("ICE params:", transportInfo.iceParameters);
-    console.log("ICE candidates:", transportInfo.iceCandidates);
     return sendTransport;
   } catch (error: any) {
     if (error.name === "InvalidStateError") {
