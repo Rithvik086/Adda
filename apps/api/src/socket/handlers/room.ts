@@ -10,7 +10,6 @@ import {
 import { logger } from "../../utils/logger.js";
 import { initRouterForRoom } from "../../rtc/sfu/routerManager.js";
 import { getConsumableProducers } from "../../rtc/sfu/index.js";
-import { error } from "console";
 
 export const handleRoomEvents = (io: Server, socket: Socket) => {
   // Event 2.1: Client sends { roomId, name }
@@ -18,10 +17,9 @@ export const handleRoomEvents = (io: Server, socket: Socket) => {
     "joinRoom",
     async ({ roomId, name }: { roomId: string; name: string }, callback) => {
       try {
-
         // Verify it is callback based call
         if (typeof callback !== "function") {
-          throw new Error("callback is not a function")
+          throw new Error("callback is not a function");
         }
 
         // 1. Generate peerId
