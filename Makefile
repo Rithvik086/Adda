@@ -5,7 +5,7 @@ docker-down-admin:
 	docker compose -f docker-compose.admin.yaml down
 
 docker-up-dev:
-	docker compose -f docker-compose.dev.yml up
+	docker compose -f docker-compose.dev.yml up --build
 
 docker-down-dev:
 	docker compose -f docker-compose.dev.yml down
